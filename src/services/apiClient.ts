@@ -1,5 +1,11 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { BilicModel, FaqModel, FormModel, WidgetApi } from '../models';
+import {
+    BilicModel,
+    FaqModel,
+    FormModel,
+    LabelData,
+    WidgetApi,
+} from '../models';
 
 interface ApiClientOptions {
     baseUrl: string;
@@ -35,9 +41,14 @@ export class ApiClient implements WidgetApi {
         this.client.interceptors.response.use(
             undefined,
             (error: AxiosError) => {
-                console.log(`Failed to call API`, error.response?.status, error.response?.data);
+                console.log(
+                    `Failed to call API`,
+                    error.response?.status,
+                    error.response?.data
+                );
                 return Promise.reject(error);
-            });
+            }
+        );
         if (options.debug) {
             this.useDebugLogs();
         }
@@ -49,32 +60,55 @@ export class ApiClient implements WidgetApi {
 
     public getFaq = async () => await this.callApi<FaqModel[]>({ url: `/faq` });
 
-    public getBilicVerify = async (requestData: BilicModel) => await this.callApi({ url: `https://api.bilic.co.uk/rating/address/${requestData?.wallet}` });
+    public getBilicVerify = async (requestData: BilicModel) =>
+        await this.callApi({
+            url: `https://api.bilic.co.uk/rating/address/${requestData?.wallet}`,
+        });
     // public getBilicVerify = async (requestData: BilicModel) => await this.callApi({ url: `http://127.0.0.1:5000/rating/address/${requestData?.wallet}` });
 
-    
     public sendForm = async (requestData: FormModel) =>
-        await this.callApi<void>({ url: `/contact`, method: 'POST', requestData });
+        await this.callApi<void>({
+            url: `/contact`,
+            method: 'POST',
+            requestData,
+        });
 
+    public postLabel = async (requestData: LabelData) =>
+        await this.callApi({
+            url: `https://bilic-strapi.herokuapp.com/api/labels/public`,
+            method: 'POST',
+            requestData,
+        });
+
+    public getBlockchains = async () =>
+        await this.callApi({
+            url: `https://bilic-strapi.herokuapp.com/api/blockchains`,
+        });
     /**
      * Helper with saint defaults to perform an HTTP call.
      * @param request A request to perform.
      */
-    private callApi<TResponse = any, TRequest = any>(request: ApiRequest<TRequest>): Promise<TResponse> {
+    private callApi<TResponse = any, TRequest = any>(
+        request: ApiRequest<TRequest>
+    ): Promise<TResponse> {
         return new Promise((resolve, reject) => {
             this.client
                 .request<TResponse>({
                     url: request.url,
                     method: request.method ?? 'GET',
                     data: request.requestData,
-                    responseType: 'json'
+                    responseType: 'json',
                 })
                 .then((response) =>
-                    response?.status && response.status >= 200 && response.status < 400
+                    response?.status &&
+                    response.status >= 200 &&
+                    response.status < 400
                         ? resolve(response?.data)
                         : reject(response?.data)
                 )
-                .catch((error: AxiosError) => reject(error.response ?? error.message));
+                .catch((error: AxiosError) =>
+                    reject(error.response ?? error.message)
+                );
         });
     }
 
@@ -86,23 +120,37 @@ export class ApiClient implements WidgetApi {
 
         this.client.interceptors.response.use(
             (response) => {
-                console.info('Got response from API', response.config.url, response.data);
+                console.info(
+                    'Got response from API',
+                    response.config.url,
+                    response.data
+                );
                 return response;
             },
             (error: AxiosError) => {
-                console.info('There was an error calling API',
-                    error.request?.url, error.response?.status, error.message);
+                console.info(
+                    'There was an error calling API',
+                    error.request?.url,
+                    error.response?.status,
+                    error.message
+                );
                 return Promise.reject(error);
-            });
+            }
+        );
     }
 
-    private useAuth(tokenFactory: () => Promise<string | undefined>, debug?: boolean) {
+    private useAuth(
+        tokenFactory: () => Promise<string | undefined>,
+        debug?: boolean
+    ) {
         this.client.interceptors.request.use(async (config) => {
             const token = await tokenFactory();
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             } else if (debug) {
-                console.log('No token returned by factory, skipping Authorization header');
+                console.log(
+                    'No token returned by factory, skipping Authorization header'
+                );
             }
 
             return config;

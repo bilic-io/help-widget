@@ -15,7 +15,12 @@ interface OwnProps {
 
 export default ({ name, title, render, error }: OwnProps) => (
     <div className={clsx(style.root, { [style.error]: error })}>
-        {title && <label for={name}>{title}</label>}
+        {title && (
+            <label for={name} className={style.label}>
+                {title}
+            </label>
+        )}
         {render({ name })}
         {error && <span>{error}</span>}
-    </div >);
+    </div>
+);

@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import TitleBar from '../components/TitleBar';
 import Faq from '../routes/Faq';
 import { Router, RouteComponent } from './Router';
+import LabelForm from '../routes/LabelForm';
 
 const Main = () => {
     const config = useContext(ConfigContext);
@@ -21,6 +22,8 @@ const Main = () => {
                 return config.text.thankYouTitle ?? 'Thank You';
             case '/faq':
                 return config.text.faqTitle ?? 'FAQ';
+            case '/labelForm':
+                return config.text.labelTitle ?? 'Label Form';
             case '/':
             default:
                 return config.text.formTitle ?? 'Bilic';
@@ -28,24 +31,38 @@ const Main = () => {
     };
 
     return (
-        <div className={clsx(style.root, { [style.noDark]: config.disableDarkMode })}>
+        <div
+            className={clsx(style.root, {
+                [style.noDark]: config.disableDarkMode,
+            })}
+        >
             <div>
                 <TitleBar routeTitle={title} />
-                <div className={clsx(
-                    style.container,
-                    { [style.minimized]: !widgetOpen },
-                    config.styles.classNameContainer)}>
+                <div
+                    className={clsx(
+                        style.container,
+                        { [style.minimized]: !widgetOpen },
+                        config.styles.classNameContainer
+                    )}
+                >
                     <Router
                         onChange={(r) => setTitle(getTitle(r))}
                         routes={{
                             '/form': <RouteComponent component={ContactForm} />,
-                            '/thankyou': <RouteComponent component={ThankYou} />,
+                            '/labelForm': (
+                                <RouteComponent component={LabelForm} />
+                            ),
+                            '/thankyou': (
+                                <RouteComponent component={ThankYou} />
+                            ),
                             '/faq': <RouteComponent component={Faq} />,
-                            '/': <RouteComponent component={BilicVerify} />
-                        }} />
+                            '/': <RouteComponent component={BilicVerify} />,
+                        }}
+                    />
                 </div>
             </div>
-        </div >);
+        </div>
+    );
 };
 
 export default Main;

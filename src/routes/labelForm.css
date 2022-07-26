@@ -1,0 +1,54 @@
+.inputfield {
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: #fafafb;
+  border: 1px solid #ecedf8;
+  color: black !important;
+  padding: 1rem;
+  outline-color: rgb(104 186 56 / 27%);
+  outline-width: 0.5rem;
+  outline-offset: 0.2rem;
+  font-size: 1rem;
+}
+
+.inputfield::placeholder {
+  color: #c7c7d4;
+  font-size: 0.72rem;
+  opacity: 1;
+}
+
+.inputfield:hover {
+  border: 1px solid #68ba3836;
+}
+
+.inputfield:focus,
+.inputfield:focus-visible,
+.inputfield:focus-within {
+  box-shadow: 0 0 0 0.25rem rgb(104 186 56 / 13%);
+  border: 1px solid #68ba3836;
+  outline: none;
+}
+
+.select {
+  height: 3.5rem !important;
+  cursor: pointer;
+  width: 100%;
+}
+
+.button {
+  height: 2.25rem !important;
+  border-radius: 0.75rem;
+  font-weight: 400;
+  font-size: 1rem;
+  color: white;
+  background: #68ba38;
+  border-color: #68ba38;
+  box-shadow: none !important;
+  border: none;
+  padding: 0 1rem;
+  width: 5.5rem !important;
+}
+
+.button:hover {
+  background: rgb(89 167 43);
+}
